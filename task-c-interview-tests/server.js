@@ -1,15 +1,12 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const supabase = require('./lib/supabaseClient');
 const validateInterviewTest = require('./utils/validation');
 
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
 
-// GET all (optional filter by field_3)
 app.get('/interview-tests', async (req, res) => {
   const { field_3 } = req.query;
   let query = supabase.from('Interview_Tests').select('*');
@@ -22,7 +19,6 @@ app.get('/interview-tests', async (req, res) => {
   res.status(200).json(data);
 });
 
-// GET by id
 app.get('/interview-tests/:id', async (req, res) => {
   const { id } = req.params;
   const { data, error } = await supabase.from('Interview_Tests').select('*').eq('id', id).single();
@@ -30,7 +26,6 @@ app.get('/interview-tests/:id', async (req, res) => {
   res.status(200).json(data);
 });
 
-// CREATE
 app.post('/interview-tests', async (req, res) => {
   const body = req.body;
   const errors = validateInterviewTest(body);
@@ -42,7 +37,6 @@ app.post('/interview-tests', async (req, res) => {
   res.status(201).json(data[0]);
 });
 
-// UPDATE
 app.put('/interview-tests/:id', async (req, res) => {
   const { id } = req.params;
   const body = req.body;
@@ -55,7 +49,6 @@ app.put('/interview-tests/:id', async (req, res) => {
   res.status(200).json(data[0]);
 });
 
-// DELETE
 app.delete('/interview-tests/:id', async (req, res) => {
   const { id } = req.params;
   const { error } = await supabase.from('Interview_Tests').delete().eq('id', id);
@@ -63,6 +56,5 @@ app.delete('/interview-tests/:id', async (req, res) => {
   res.status(204).end();
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
